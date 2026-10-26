@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manufacturing Waste Calculator | Kailean Management Consultancy</title>
+  <meta name="description" content="Estimate what the 8 wastes of Lean (DOWNTIME) cost your plant each year: labor, scrap, excess inventory and hidden capacity, and how much Lean could recover.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <meta name="theme-color" content="#224A77">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <style>
+    .bottleneck-head .letter { width: 26px; height: 26px; border-radius: 7px; background: var(--brand-blue); color: #fff; display: grid; place-items: center; font: 700 .8rem/1 "Montserrat", sans-serif; flex-shrink: 0; }
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+    @media (max-width: 420px) { .field-row { grid-template-columns: 1fr; } }
+    fieldset { border: 0; padding: 0; margin: 0 0 6px; }
+    legend { font: 600 .78rem/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin: 10px 0 14px; }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="Kailean home">
+      <img class="brand-logo" src="assets/img/kailean-mark.png" alt="" width="450" height="245">
+      <span class="brand-text"><span class="kai">KAI</span><span class="lean">LEAN</span><small>Management Consultancy Services</small><em class="brand-slogan">Simplicity. Efficiency. Growth.</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="index.html#solutions">Solutions</a>
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#results">Results</a>
+      <a href="calculator.html" aria-current="page">Calculator</a>
+      <a href="assessment.html">Assessment</a>
+      <a class="btn btn-primary btn-sm" href="#" data-book>Book a call <span class="arrow">→</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Free tool · Manufacturing &amp; production · 2 minutes</span>
+      <h1 style="font-size:clamp(2rem,4.5vw,3.4rem)">What are the 8 wastes costing your plant?</h1>
+      <p>Enter a few numbers about your production floor and rate each DOWNTIME waste. We'll estimate the annual cost in labor, scrap and inventory, the hidden capacity in your lines, and what Lean could realistically recover.</p>
+    </div>
+  </section>
+
+  <section style="padding-bottom:96px">
+    <div class="container tool-grid">
+      <!-- INPUTS -->
+      <form class="panel sticky" id="calc-form" novalidate onsubmit="return false">
+        <h2>Your plant</h2>
+        <div class="field" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <span class="label" style="margin:0">Currency</span>
+          <div class="toggle" role="group" aria-label="Currency">
+            <button type="button" data-cur="PHP" aria-pressed="true">PHP ₱</button>
+            <button type="button" data-cur="USD" aria-pressed="false">USD $</button>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend>Production profile</legend>
+          <div class="field">
+            <label for="sector">Sector</label>
+            <select id="sector">
+              <option value="food">Food &amp; beverage</option>
+              <option value="electronics">Electronics &amp; semiconductors</option>
+              <option value="auto">Automotive &amp; parts</option>
+              <option value="plastics">Plastics &amp; packaging</option>
+              <option value="garments">Garments &amp; textiles</option>
+              <option value="metal">Metal fabrication</option>
+              <option value="other" selected>Other manufacturing</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="workers">Production workers</label>
+              <input type="number" id="workers" min="1" max="20000" value="120" inputmode="numeric">
+              <div class="error" id="workers-err" hidden>Enter 1–20,000.</div>
+            </div>
+            <div class="field">
+              <label for="cost">Cost / worker / yr (<span class="cur">₱</span>)</label>
+              <input type="number" id="cost" min="0" step="1000" inputmode="numeric" data-money>
+            </div>
+          </div>
+          <div class="hint" style="margin:-8px 0 14px;font-size:.8rem;color:var(--muted)">Direct and indirect labor, fully loaded (wages, benefits, 13th month, overhead). Pre-filled with an editable sector estimate.</div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Materials, quality &amp; inventory</legend>
+          <div class="field-row">
+            <div class="field">
+              <label for="material">Material spend / yr (<span class="cur">₱</span>)</label>
+              <input type="number" id="material" min="0" step="100000" value="120000000" inputmode="numeric" data-money>
+            </div>
+            <div class="field">
+              <label for="scrap">Scrap &amp; rework rate (%)</label>
+              <input type="number" id="scrap" min="0" max="50" step="0.1" value="4" inputmode="decimal">
+            </div>
+            <div class="field">
+              <label for="inventory">Avg. inventory value (<span class="cur">₱</span>)</label>
+              <input type="number" id="inventory" min="0" step="100000" value="30000000" inputmode="numeric" data-money>
+              <div class="hint">Raw materials + WIP + finished goods</div>
+            </div>
+            <div class="field">
+              <label for="oee">Current OEE (%)</label>
+              <input type="number" id="oee" min="10" max="95" step="1" value="60" inputmode="numeric">
+              <div class="hint">Not sure? 55–65% is typical</div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Rate the 8 wastes (DOWNTIME)</legend>
+          <div id="wastes"></div>
+        </fieldset>
+        <button type="button" class="btn btn-ghost btn-sm" id="reset">Reset</button>
+      </form>
+
+      <!-- RESULTS -->
+      <div aria-live="polite">
+        <div class="results-main">
+          <div class="label">Estimated annual cost of waste</div>
+          <div class="big" id="r-waste">—</div>
+          <div style="font-size:.9rem" id="r-split"></div>
+          <hr>
+          <div class="label">Realistically recoverable with Lean</div>
+          <div class="range" id="r-recover">—</div>
+          <div style="font-size:.85rem;margin-top:6px">per year: 20–40% of labor waste, 30–50% of scrap and inventory carrying cost</div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><span class="label">Hidden capacity (OEE)</span><strong id="r-oee">—</strong><span style="font-size:.82rem" id="r-oee-sub">more output from the same lines</span></div>
+          <div class="kpi"><span class="label">Labor capacity freed</span><strong id="r-fte">—</strong><span style="font-size:.82rem">operators redeployed to value-adding work</span></div>
+          <div class="kpi"><span class="label">Scrap &amp; rework rate</span><strong id="r-scrap">—</strong><span style="font-size:.82rem">typical result after Kaizen &amp; poka-yoke</span></div>
+          <div class="kpi"><span class="label">Cash released from inventory</span><strong id="r-cash">—</strong><span style="font-size:.82rem">one-time, from cutting excess stock &amp; WIP</span></div>
+        </div>
+
+        <div class="panel" style="margin-bottom:20px">
+          <h3 style="font-size:1.1rem">Annual cost by waste</h3>
+          <div id="r-breakdown"></div>
+          <p style="font-size:.85rem;margin:6px 0 0" id="r-lead"></p>
+          <details class="how">
+            <summary>How we calculate this</summary>
+            <p style="margin-top:10px"><b>Labor waste:</b> each waste has a benchmark share of operator time it typically consumes (e.g. waiting 7%, motion 4%), scaled by your rating (low ×0.5, medium ×1, high ×1.5). The combined total is capped at 30%.<br><code>labor waste = workers × cost per worker × labor waste %</code></p>
+            <p><b>Defects:</b> <code>material spend × scrap &amp; rework rate</code>, plus the rework labor above.</p>
+            <p><b>Inventory:</b> carrying cost (storage, capital, handling, obsolescence) of about 25% per year, applied to the excess portion of your stock (15% / 30% / 45% for low / medium / high).<br><code>carrying cost = inventory × excess share × 25%</code></p>
+            <p><b>Hidden capacity:</b> Lean typically lifts OEE by 5 / 10 / 15 points depending on how severe waiting and downtime are (capped at 85%, world class).<br><code>capacity gain = target OEE ÷ current OEE − 1</code></p>
+            <p style="margin:0">These are indicative estimates from common Lean manufacturing benchmarks. A diagnostic engagement replaces them with your plant's real data.</p>
+          </details>
+        </div>
+
+        <!-- GATE -->
+        <div class="panel" id="gate">
+          <h3 style="font-size:1.25rem">Get the full breakdown and a 90-day plant plan</h3>
+          <p style="font-size:.95rem">We'll prepare a printable report with these numbers, quick wins for your top wastes and a recommended starting point.</p>
+          <form id="lead-form" novalidate>
+            <div class="grid grid-2" style="gap:0 16px">
+              <div class="field"><label for="l-name">Name</label><input type="text" id="l-name" autocomplete="name" required></div>
+              <div class="field"><label for="l-email">Work email</label><input type="email" id="l-email" autocomplete="email" required></div>
+              <div class="field"><label for="l-company">Company / plant</label><input type="text" id="l-company" autocomplete="organization"></div>
+              <div class="field"><label for="l-role">Role</label>
+                <select id="l-role"><option value="">Select…</option><option>Owner / GM</option><option>Plant / operations manager</option><option>Production supervisor</option><option>Quality / CI engineer</option><option>Other</option></select>
+              </div>
+            </div>
+            <label class="consent"><input type="checkbox" id="l-consent" required> <span>I agree that Kailean may store my details to send this report and follow up, in line with the Data Privacy Act of 2012 (RA 10173). I can opt out anytime.</span></label>
+            <div class="error" id="lead-err" hidden style="margin-bottom:12px"></div>
+            <button class="btn btn-primary" type="submit">Show my report <span class="arrow">→</span></button>
+          </form>
+        </div>
+
+        <div class="panel" id="success" hidden>
+          <div class="success no-print">✓ Your report is ready below. Use <b>Print / Save as PDF</b> to keep a copy.</div>
+          <div class="print-only"><h2>Kailean: Manufacturing Waste Report</h2></div>
+          <div id="report"></div>
+          <div class="btn-row no-print" style="margin-top:20px">
+            <button class="btn btn-ghost" type="button" onclick="window.print()">Print / Save as PDF</button>
+            <button class="btn btn-primary" type="button" id="book-validate">Validate these numbers on a free call <span class="arrow">→</span></button>
+          </div>
+        </div>
+        <p class="disclaimer">Indicative estimate only. Actual results depend on your processes and are validated with a Gemba walk and diagnostic.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="border:0;padding:0">
+      <span>© <span id="year">2026</span> Kailean Management Consultancy Services · <a href="mailto:hello@kaileanconsultancy.com">hello@kaileanconsultancy.com</a></span>
+      <span>Officially registered and regulated in the Philippines.</span>
+    </div>
+  </div>
+</footer>
+
+<div class="mobile-bar">
+  <a class="btn btn-ghost" href="assessment.html">Get my score</a>
+  <a class="btn btn-primary" href="#" data-book>Book a call</a>
+</div>
+
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<script src="assets/js/main.js"></script>
+<script>
+(function () {
+  const K = window.KAILEAN;
+  const $ = (s) => document.querySelector(s);
+
+  // Editable defaults: fully-loaded yearly cost per production worker (PHP)
+  const SECTOR_COST = { food: 300000, electronics: 360000, auto: 380000, plastics: 300000, garments: 260000, metal: 340000, other: 320000 };
+
+  // DOWNTIME: labor = benchmark share of operator time at "medium" severity
+  const WASTES = [
+    { id: "D", name: "Defects", hint: "Scrap, rework, customer returns", labor: 0.03, on: true, sev: "med",
+      win: "Run a weekly scrap Pareto by cause and add a poka-yoke (error-proofing) device or first-article check at the top defect station." },
+    { id: "O", name: "Overproduction", hint: "Making more or earlier than the next process needs", labor: 0.03, on: false, sev: "med",
+      win: "Produce to a pull signal (kanban) instead of forecast batches, and level the schedule across the week (heijunka)." },
+    { id: "W", name: "Waiting", hint: "Machine downtime, changeovers, starved or blocked lines", labor: 0.07, on: true, sev: "med",
+      win: "Log the top 3 downtime reasons per machine every shift, run a SMED workshop on your longest changeover, and start TPM daily checks." },
+    { id: "N", name: "Non-utilized talent", hint: "Operator ideas and skills not used", labor: 0.02, on: false, sev: "med",
+      win: "Start a 10-minute daily shift huddle with a Kaizen idea board, and cross-train operators on the bottleneck machine." },
+    { id: "T", name: "Transportation", hint: "Forklift trips, moving WIP between areas", labor: 0.03, on: false, sev: "med",
+      win: "Draw a spaghetti diagram of one product's route and relocate stations or racks to cut material moves." },
+    { id: "I", name: "Inventory", hint: "Excess raw material, WIP and finished goods", labor: 0.01, on: true, sev: "med",
+      win: "Set min/max levels and a two-bin kanban for your top 20 materials, and use FIFO lanes for WIP." },
+    { id: "M", name: "Motion", hint: "Walking, reaching, searching for tools and parts", labor: 0.04, on: false, sev: "med",
+      win: "Run 5S at the bottleneck station: shadow boards and point-of-use tools and parts within arm's reach." },
+    { id: "E", name: "Extra-processing", hint: "Over-spec work, redundant inspections, double handling", labor: 0.03, on: false, sev: "med",
+      win: "Compare specs to real customer requirements and remove duplicate inspections and re-handling steps." }
+  ];
+  const SEV = { low: 0.5, med: 1, high: 1.5 };
+  const EXCESS = { low: 0.15, med: 0.30, high: 0.45 };
+  const OEE_UPLIFT = { low: 5, med: 10, high: 15 };
+  const LABOR_CAP = 0.30, CARRY = 0.25, WORLD_CLASS = 85;
+  const R = { labor: [0.2, 0.4], scrap: [0.3, 0.5], inv: [0.3, 0.5] };
+
+  let currency = "PHP";
+  const state = {};
+  const wrap = $("#wastes");
+  const defaults = () => WASTES.forEach((w) => (state[w.id] = { on: w.on, sev: w.sev }));
+  defaults();
+  WASTES.forEach((w) => {
+    const el = document.createElement("div");
+    el.className = "bottleneck";
+    el.innerHTML = `
+      <label class="bottleneck-head"><input type="checkbox" data-w="${w.id}"><span class="letter">${w.id}</span><span>${w.name}<small>${w.hint}</small></span></label>
+      <div class="severity" role="group" aria-label="${w.name} severity">
+        <button type="button" data-w="${w.id}" data-sev="low">Low</button>
+        <button type="button" data-w="${w.id}" data-sev="med">Medium</button>
+        <button type="button" data-w="${w.id}" data-sev="high">High</button>
+      </div>`;
+    wrap.appendChild(el);
+  });
+
+  const workers = $("#workers"), cost = $("#cost"), sector = $("#sector");
+  const material = $("#material"), scrap = $("#scrap"), inventory = $("#inventory"), oee = $("#oee");
+  const toCur = (php) => (currency === "PHP" ? php : Math.round(php / K.phpPerUsd));
+  const setDefaultCost = () => { cost.value = toCur(SECTOR_COST[sector.value]); };
+  setDefaultCost();
+
+  const fmt = (v) => {
+    const sym = currency === "PHP" ? "₱" : "$";
+    if (v >= 1e9) return sym + (v / 1e9).toFixed(2) + "B";
+    if (v >= 1e6) return sym + (v / 1e6).toFixed(1) + "M";
+    if (v >= 1e3) return sym + Math.round(v / 1e3) + "k";
+    return sym + Math.round(v);
+  };
+  const num = (el, min = 0, max = Infinity) => Math.min(max, Math.max(min, parseFloat(el.value) || 0));
+
+  let last = null;
+  function compute() {
+    const n = parseInt(workers.value, 10);
+    const valid = n >= 1 && n <= 20000;
+    $("#workers-err").hidden = valid || workers.value === "";
+    const people = valid ? n : 0;
+    const c = num(cost), mat = num(material), sr = num(scrap, 0, 50) / 100, inv = num(inventory), curOee = num(oee, 10, 95);
+
+    // Labor waste per DOWNTIME category (scaled down proportionally if over the cap)
+    const active = WASTES.filter((w) => state[w.id].on);
+    const rawLabor = active.reduce((s, w) => s + w.labor * SEV[state[w.id].sev], 0);
+    const laborPct = Math.min(rawLabor, LABOR_CAP);
+    const scale = rawLabor > 0 ? laborPct / rawLabor : 0;
+    const laborBase = people * c;
+
+    const parts = active.map((w) => ({ id: w.id, name: w.name, sev: state[w.id].sev, cost: laborBase * w.labor * SEV[state[w.id].sev] * scale, note: "labor" }));
+    const laborCost = laborBase * laborPct;
+
+    // Defects: material scrap (always counted when Defects is ticked)
+    const dOn = state.D.on;
+    const scrapCost = dOn ? mat * sr : 0;
+    const d = parts.find((p) => p.id === "D");
+    if (d) { d.cost += scrapCost; d.note = "scrap + rework labor"; }
+
+    // Inventory: carrying cost on excess stock
+    const iOn = state.I.on;
+    const excess = iOn ? EXCESS[state.I.sev] : 0;
+    const carryCost = inv * excess * CARRY;
+    const ip = parts.find((p) => p.id === "I");
+    if (ip) { ip.cost += carryCost; ip.note = "carrying cost + handling"; }
+
+    // Hidden capacity from OEE gap (driven by Waiting severity)
+    const up = state.W.on ? OEE_UPLIFT[state.W.sev] : 5;
+    const tHi = Math.min(WORLD_CLASS, curOee + up), tLo = Math.min(WORLD_CLASS, curOee + up * 0.6);
+    const capLo = Math.max(0, tLo / curOee - 1), capHi = Math.max(0, tHi / curOee - 1);
+
+    const total = laborCost + scrapCost + carryCost;
+    const lo = laborCost * R.labor[0] + scrapCost * R.scrap[0] + carryCost * R.inv[0];
+    const hi = laborCost * R.labor[1] + scrapCost * R.scrap[1] + carryCost * R.inv[1];
+
+    // Lead time scales with WIP (Little's Law): cutting excess inventory and waiting shortens it
+    const wSev = state.W.on ? SEV[state.W.sev] : 0;
+    const ex = iOn ? excess : (state.O.on ? 0.15 : 0.1);
+    const leadLo = Math.min(40, Math.round(100 * (ex * 0.5 + 0.03 * wSev)));
+    const leadHi = Math.min(60, Math.round(100 * (ex + 0.06 * wSev)));
+
+    last = {
+      people, cost: c, mat, sr, inv, curOee, laborPct, laborCost, scrapCost, carryCost, total, lo, hi,
+      fteLo: people * laborPct * R.labor[0], fteHi: people * laborPct * R.labor[1],
+      tLo, tHi, capLo, capHi,
+      srLo: sr * (1 - R.scrap[1]), srHi: sr * (1 - R.scrap[0]),
+      cashLo: inv * excess * 0.3, cashHi: inv * excess * 0.5,
+      leadLo, leadHi, parts
+    };
+    render();
+  }
+
+  const pct = (v, dp = 0) => (v * 100).toFixed(dp) + "%";
+  function render() {
+    const r = last;
+    $("#r-waste").textContent = fmt(r.total);
+    $("#r-split").textContent = r.total
+      ? `Labor ${fmt(r.laborCost)} · Scrap ${fmt(r.scrapCost)} · Inventory carrying ${fmt(r.carryCost)}`
+      : "Tick at least one waste to see your estimate";
+    $("#r-recover").textContent = r.total ? `${fmt(r.lo)} – ${fmt(r.hi)}` : "—";
+    $("#r-oee").textContent = r.capHi > 0 ? `+${pct(r.capLo)} to +${pct(r.capHi)}` : "At world class";
+    $("#r-oee-sub").textContent = r.capHi > 0 ? `OEE ${r.curOee}% → ${Math.round(r.tLo)}–${Math.round(r.tHi)}%: more output from the same lines` : "OEE already at 85%+";
+    $("#r-fte").textContent = r.laborPct ? `${r.fteLo.toFixed(1)} – ${r.fteHi.toFixed(1)} FTE` : "—";
+    $("#r-scrap").textContent = state.D.on && r.sr ? `${pct(r.sr, 1)} → ${pct(r.srLo, 1)}–${pct(r.srHi, 1)}` : "—";
+    $("#r-cash").textContent = state.I.on && r.inv ? `${fmt(r.cashLo)} – ${fmt(r.cashHi)}` : "—";
+    $("#r-lead").textContent = r.parts.length ? `Typical production lead-time reduction for this waste profile: −${r.leadLo}% to −${r.leadHi}%.` : "";
+    const sorted = r.parts.slice().sort((a, b) => b.cost - a.cost);
+    const max = Math.max(1, ...sorted.map((p) => p.cost));
+    $("#r-breakdown").innerHTML = sorted.length
+      ? sorted.map((p) => `
+        <div class="bar-row">
+          <div class="bar-label"><span><b style="color:var(--brand-blue)">${p.id}</b> · ${p.name} <small style="color:var(--muted);font-weight:500">(${p.sev === "med" ? "medium" : p.sev}; ${p.note})</small></span><span>${fmt(p.cost)}</span></div>
+          <div class="bar-track"><div class="bar after" style="width:${(p.cost / max) * 100}%"></div></div>
+        </div>`).join("")
+      : '<p style="color:var(--muted)">Tick a waste to see the breakdown.</p>';
+  }
+
+  function syncUI() {
+    document.querySelectorAll(".bottleneck").forEach((el) => {
+      const id = el.querySelector("input").dataset.w;
+      el.classList.toggle("active", state[id].on);
+      el.querySelector("input").checked = state[id].on;
+      el.querySelectorAll(".severity button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.sev === state[id].sev));
+    });
+  }
+
+  wrap.addEventListener("change", (e) => { const id = e.target.dataset.w; if (id) { state[id].on = e.target.checked; syncUI(); compute(); } });
+  wrap.addEventListener("click", (e) => { const b = e.target.closest("button[data-sev]"); if (b) { state[b.dataset.w].sev = b.dataset.sev; syncUI(); compute(); } });
+  let t;
+  [workers, cost, material, scrap, inventory, oee].forEach((el) => el.addEventListener("input", () => { clearTimeout(t); t = setTimeout(compute, 150); }));
+  sector.addEventListener("change", () => { setDefaultCost(); compute(); });
+  document.querySelectorAll("[data-cur]").forEach((btn) => btn.addEventListener("click", () => {
+    if (btn.dataset.cur === currency) return;
+    const toUsd = btn.dataset.cur === "USD";
+    document.querySelectorAll("[data-money]").forEach((el) => {
+      const v = parseFloat(el.value) || 0;
+      el.value = toUsd ? Math.round(v / K.phpPerUsd) : Math.round(v * K.phpPerUsd);
+    });
+    currency = btn.dataset.cur;
+    document.querySelectorAll("[data-cur]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.cur === currency));
+    document.querySelectorAll(".cur").forEach((s) => (s.textContent = currency === "PHP" ? "₱" : "$"));
+    compute();
+  }));
+  $("#reset").addEventListener("click", () => {
+    sector.value = "other"; workers.value = 120; scrap.value = 4; oee.value = 60;
+    material.value = toCur(120000000); inventory.value = toCur(30000000);
+    defaults(); setDefaultCost(); syncUI(); compute();
+  });
+
+  // Lead gate → report
+  let person = {};
+  $("#lead-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = $("#l-name").value.trim(), email = $("#l-email").value.trim();
+    const err = $("#lead-err");
+    if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = "Please enter your name and a valid email."; err.hidden = false; return; }
+    if (!$("#l-consent").checked) { err.textContent = "Please tick the consent box so we can send your report."; err.hidden = false; return; }
+    err.hidden = true;
+    person = { name, email, company: $("#l-company").value.trim(), role: $("#l-role").value };
+    const r = last;
+    const top = r.parts.slice().sort((a, b) => b.cost - a.cost);
+    K.sendLead(Object.assign({ source: "manufacturing-waste-calculator", sector: sector.value, currency }, person, {
+      workers: r.people, oee: r.curOee, scrapRate: +(r.sr * 100).toFixed(1), wasteCost: Math.round(r.total),
+      recoverableLow: Math.round(r.lo), recoverableHigh: Math.round(r.hi), wastes: top.map((p) => p.name + " (" + p.sev + ")").join(", ")
+    }));
+    const win = (id) => WASTES.find((w) => w.id === id).win;
+    $("#report").innerHTML = `
+      <p><b>Prepared for:</b> ${esc(name)}${person.company ? ", " + esc(person.company) : ""} · ${new Date().toLocaleDateString()}<br>
+      <b>Sector:</b> ${esc(sector.options[sector.selectedIndex].text)}</p>
+      <h3>Summary</h3>
+      <ul>
+        <li>Production workers: <b>${r.people}</b> at <b>${fmt(r.cost)}</b>/yr each · OEE <b>${r.curOee}%</b> · scrap &amp; rework <b>${pct(r.sr, 1)}</b></li>
+        <li>Estimated annual cost of waste: <b>${fmt(r.total)}</b> (labor ${fmt(r.laborCost)}, scrap ${fmt(r.scrapCost)}, inventory carrying ${fmt(r.carryCost)})</li>
+        <li>Recoverable with Lean: <b>${fmt(r.lo)} – ${fmt(r.hi)}</b> per year</li>
+        <li>Hidden capacity: <b>+${pct(r.capLo)} to +${pct(r.capHi)}</b> output · labor freed <b>${r.fteLo.toFixed(1)}–${r.fteHi.toFixed(1)} FTE</b></li>
+        ${state.I.on ? `<li>One-time cash release from inventory: <b>${fmt(r.cashLo)} – ${fmt(r.cashHi)}</b></li>` : ""}
+        <li>Production lead time: <b>−${r.leadLo}% to −${r.leadHi}%</b></li>
+      </ul>
+      <h3>Quick wins for your top wastes</h3>
+      <ol class="plan">${top.slice(0, 4).map((p) => `<li><b>${p.id} · ${p.name}:</b> ${win(p.id)}</li>`).join("")}</ol>
+      <h3>90-day plant plan</h3>
+      <ol class="plan">
+        <li><b>Days 1–14, Gemba &amp; diagnose:</b> Gemba walks on every shift, a value stream map of your highest-volume product family, and a baseline of OEE, scrap and inventory days.</li>
+        <li><b>Days 15–45, Kaizen:</b> one or two Kaizen events on ${top[0] ? top[0].name.toLowerCase() : "the biggest waste"}${top[1] ? " and " + top[1].name.toLowerCase() : ""} (e.g. SMED, poka-yoke, cell layout), with before/after measurement.</li>
+        <li><b>Days 46–90, Standardize &amp; sustain:</b> standard work at the bottleneck, TPM daily checks, an OEE / scrap board on the floor, and tiered daily huddles.</li>
+      </ol>`;
+    $("#gate").hidden = true;
+    $("#success").hidden = false;
+    $("#success").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  $("#book-validate").addEventListener("click", () => {
+    const top = last.parts.slice().sort((a, b) => b.cost - a.cost)[0];
+    K.book({ name: person.name, email: person.email, a1: `Plant calculator: ${fmt(last.total)} waste/yr, OEE ${last.curOee}%, top waste ${top ? top.name : "n/a"}` });
+  });
+  function esc(s) { return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+
+  syncUI();
+  compute();
+})();
+</script>
+</body>
+</html>
